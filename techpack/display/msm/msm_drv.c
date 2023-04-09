@@ -52,6 +52,7 @@
 #include "msm_mmu.h"
 #include "sde_wb.h"
 #include "sde_dbg.h"
+#include "sde/sde_encoder.h"
 
 #ifdef OPLUS_BUG_STABILITY
 #include "oplus_adfr.h"
@@ -81,7 +82,7 @@
 #define LASTCLOSE_TIMEOUT_MS	500
 
 #define IDLE_ENCODER_MASK_DEFAULT	2
-#define IDLE_TIMEOUT_MS_DEFAULT		100
+#define IDLE_TIMEOUT_MS_DEFAULT		100 - IDLE_POWERCOLLAPSE_DURATION
 
 #define msm_wait_event_timeout(waitq, cond, timeout_ms, ret)		\
 	do {								\
