@@ -52,9 +52,6 @@
 #include "msm_mmu.h"
 #include "sde_wb.h"
 #include "sde_dbg.h"
-#if defined(OPLUS_FEATURE_PXLW_IRIS5) || defined(OPLUS_FEATURE_PXLW_SOFT_IRIS)
-#include "dsi/iris/dsi_iris5_api.h"
-#endif
 #include "sde/sde_encoder.h"
 
 #ifdef OPLUS_BUG_STABILITY
@@ -1977,10 +1974,6 @@ static const struct drm_ioctl_desc msm_ioctls[] = {
 	DRM_IOCTL_DEF_DRV(MSM_RMFB2, msm_ioctl_rmfb2, DRM_UNLOCKED),
 	DRM_IOCTL_DEF_DRV(MSM_POWER_CTRL, msm_ioctl_power_ctrl,
 			DRM_RENDER_ALLOW),
-#if defined(OPLUS_FEATURE_PXLW_IRIS5) || defined(OPLUS_FEATURE_PXLW_SOFT_IRIS)
-	DRM_IOCTL_DEF_DRV(MSM_IRIS_OPERATE_CONF, msm_ioctl_iris_operate_conf, DRM_UNLOCKED|DRM_RENDER_ALLOW),
-	DRM_IOCTL_DEF_DRV(MSM_IRIS_OPERATE_TOOL, msm_ioctl_iris_operate_tool, DRM_UNLOCKED|DRM_RENDER_ALLOW),
-#endif
 	DRM_IOCTL_DEF_DRV(MSM_DISPLAY_HINT, msm_ioctl_display_hint_ops,
 			DRM_UNLOCKED),
 };
