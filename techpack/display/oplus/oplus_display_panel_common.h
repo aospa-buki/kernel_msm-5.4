@@ -102,7 +102,6 @@ int oplus_display_panel_get_dither(void *data);
 int oplus_display_panel_get_roundcorner(void *data);
 int oplus_display_panel_set_dynamic_osc_clock(void *data);
 int oplus_display_panel_get_dynamic_osc_clock(void *data);
-int oplus_display_get_softiris_color_status(void *data);
 int oplus_display_panel_hbm_lightspot_check(void);
 int oplus_display_panel_get_panel_bpp(void *buf);
 int oplus_display_panel_get_panel_name(void *buf);
