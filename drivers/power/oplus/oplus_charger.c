@@ -159,7 +159,7 @@ static void oplus_chg_voter_charging_start(struct oplus_chg_chip *chip,
 extern void oplus_start_svooc_reset(void);
 extern void oplus_start_pps_reset(void);
 static void oplus_chg_check_abnormal_adapter(int vbus_rising);
-#if IS_ENABLED(CONFIG_FB) || IS_ENABLED(CONFIG_QCOM_KGSL) || IS_ENABLED(CONFIG_DRM_OPLUS_NOTIFY)
+#if IS_ENABLED(CONFIG_FB) || IS_ENABLED(CONFIG_DRM_MSM) || IS_ENABLED(CONFIG_DRM_OPLUS_NOTIFY)
 static int fb_notifier_callback(struct notifier_block *nb, unsigned long event, void *data);
 #elif IS_ENABLED(CONFIG_OPLUS_MTK_DRM_GKI_NOTIFY_CHG)
 static int chg_mtk_drm_notifier_callback(struct notifier_block *nb, unsigned long event, void *data);
@@ -2787,11 +2787,29 @@ static void oplus_chg_awake_init(struct oplus_chg_chip *chip)
 	if (!chip) {
 		return;
 	}
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
+	wake_lock_init(&chip->suspend_lock, WAKE_LOCK_SUSPEND, "battery suspend wakelock");
+
+#else
 	chip->suspend_ws = wakeup_source_register(NULL, "battery suspend wakelock");
+#endif
 }
 
 static void oplus_chg_set_awake(struct oplus_chg_chip *chip, bool awake)
 {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
+	if (chip->unwakelock_chg == 1 && awake == true) {
+		charger_xlog_printk(CHG_LOG_CRTI,
+			"error, unwakelock testing, can not set wakelock.\n");
+		return;
+	}
+
+	if (awake){
+		wake_lock(&chip->suspend_lock);
+	} else {
+		wake_unlock(&chip->suspend_lock);
+	}
+#else
 	static bool pm_flag = false;
 
 	if (chip->unwakelock_chg == 1 && awake == true) {
@@ -2805,11 +2823,12 @@ static void oplus_chg_set_awake(struct oplus_chg_chip *chip, bool awake)
 
 	if (awake && !pm_flag) {
 		pm_flag = true;
-		__pm_wakeup_event(chip->suspend_ws, 500);
+		__pm_stay_awake(chip->suspend_ws);
 	} else if (!awake && pm_flag) {
 		__pm_relax(chip->suspend_ws);
 		pm_flag = false;
 	}
+#endif
 }
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0))
@@ -3307,7 +3326,7 @@ int oplus_chg_init(struct oplus_chg_chip *chip)
 
 	oplus_pps_init(chip);
 
-#if IS_ENABLED(CONFIG_QCOM_KGSL) || IS_ENABLED(CONFIG_DRM_OPLUS_NOTIFY)
+#if IS_ENABLED(CONFIG_DRM_MSM) || IS_ENABLED(CONFIG_DRM_OPLUS_NOTIFY)
 	chip->chg_fb_notify.notifier_call = fb_notifier_callback;
 	rc = msm_drm_register_client(&chip->chg_fb_notify);
 #elif IS_ENABLED(CONFIG_FB)
@@ -8973,7 +8992,7 @@ static void oplus_chg_update_ui_soc(struct oplus_chg_chip *chip)
 	} else {
 		cnt = 0;
 		full_cnt = 0;
-		chip->prop_status = POWER_SUPPLY_STATUS_DISCHARGING;
+		chip->prop_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
 		soc_up_count = 0;
 		allow_uisoc_down = false;
 		if (chip->smooth_soc <= chip->ui_soc || vbatt_too_low) {
@@ -10925,7 +10944,7 @@ static void oplus_chg_reset_adapter_work(struct work_struct *work) {
 	}
 }
 
-void oplus_chg_turn_on_charging_in_work(void)
+void oplus_chg_turn_on_charging_in_work()
 {
 	if (g_charger_chip)
 		schedule_delayed_work(&g_charger_chip->turn_on_charging_work, 0);
