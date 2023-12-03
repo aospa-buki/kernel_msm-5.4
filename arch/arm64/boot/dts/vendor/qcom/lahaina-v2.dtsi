@@ -7,19 +7,19 @@
 };
 
 &CPU4 {
-	dynamic-power-coefficient = <499>;
+	dynamic-power-coefficient = <362>;
 };
 
 &CPU5 {
-	dynamic-power-coefficient = <499>;
+	dynamic-power-coefficient = <362>;
 };
 
 &CPU6 {
-	dynamic-power-coefficient = <499>;
+	dynamic-power-coefficient = <362>;
 };
 
 &CPU7 {
-	dynamic-power-coefficient = <760>;
+	dynamic-power-coefficient = <553>;
 };
 
 &kryo_erp {
