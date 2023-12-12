@@ -278,7 +278,7 @@ static struct kernel_param_ops enable_ops = {
 };
 module_param_cb(enable, &enable_ops, NULL, 0664);
 
-static bool debug;
+static bool debug = false;
 module_param_named(debug, debug, bool, 0664);
 
 static unsigned int decay = 80;
@@ -336,7 +336,7 @@ static int cb_config_store(const char *buf, const struct kernel_param *kp)
 	} v;
 	struct cpufreq_bouncing *cb;
 
-	if (debug)
+	if (unlikely(debug))
 		pr_info("%s\n", buf);
 
 	if (sscanf(buf, "%d,%d,%d,%llu,%d,%lld,%d,%lld\n",
@@ -533,7 +533,7 @@ unsigned int cb_cap(struct cpufreq_policy *pol, unsigned int freq)
 
 	capped = min(freq, cb->freqs[cb->cur_level]);
 
-	if (debug)
+	if (unlikely(debug))
 		pr_info("cpu %d, orig %u, capped %d\n", cpu, freq, capped);
 
 	return capped;
@@ -600,7 +600,7 @@ static void cb_core_boost(u64 time)
 		}
 	}
 
-	if (debug)
+	if (unlikely(debug))
 		pr_info("core_ctl_boost: %d %d %llu\n", need_boost, last_core_boost, last_core_boost_ts);
 
 	if (need_boost != last_core_boost) {
@@ -705,7 +705,7 @@ void cb_update(struct cpufreq_policy *pol, u64 time)
 	}
 #endif
 
-	if (debug)
+	if (unlikely(debug))
 		pr_info("cpu %d update: ts now %llu last %llu last_update %llu delta %llu update_d %llu cur %u acc %llu, cur_level %d min_over_target_freq %d isolated %d last_core_boost %d\n",
 			cpu,
 			NSEC_TO_MSEC(time),
@@ -816,7 +816,7 @@ static void cb_do_boundary_change_work(struct work_struct *qos_work)
 
 	target = max(cb->freqs[cb->cur_level], pol->min);
 
-	if (debug)
+	if (unlikely(debug))
 		pr_info("processing work cpu %d min %u max %u target %u req max %u\n",
 			cb->first_cpu, pol->min, pol->max, target, cb->qos_req.pnode.prio);
 
