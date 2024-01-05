@@ -1,19 +1,19 @@
 #include <linux/cpufreq_effiency.h>
 
 // affect_mode, @1: enable cpufreq effiency, @0: disable cprfreq effiency.
-static int affect_mode = 0;
+static int affect_mode = 1;
 module_param(affect_mode, int, 0664);
 
 // Silver cluster, param@0: affect_freq1, param@1: affect_thres1, param@2: affect_freq2, param@3: affect_thres2, param@4 need mask freq.
-static int cluster0_effiency[MAX_CLUSTER_PARAMETERS] = { 0, 0, 0, 0, 0};
+static int cluster0_effiency[MAX_CLUSTER_PARAMETERS] = { 300000, 45000, 1209600, 50000, 0 };
 module_param_array(cluster0_effiency, int, NULL, 0664);
 
 // Gold cluster, param@0: affect_freq1, param@1: affect_thres1, param@2: affect_freq2, param@3: affect_thres2, param@4 need mask freq.
-static int cluster1_effiency[MAX_CLUSTER_PARAMETERS] = { 0, 0, 0, 0, 0};
+static int cluster1_effiency[MAX_CLUSTER_PARAMETERS] = { 710400, 45000, 1881600, 50000, 0 };
 module_param_array(cluster1_effiency, int, NULL, 0664);
 
 // Gold_plus cluster, param@0: affect_freq1, param@1: affect_thres1, param@2: affect_freq2, param@3: affect_thres2, param@4 need mask freq.
-static int cluster2_effiency[MAX_CLUSTER_PARAMETERS] = { 0, 0, 0, 0, 0};
+static int cluster2_effiency[MAX_CLUSTER_PARAMETERS] = { 844800, 50000, 2035200, 55000, 0};
 module_param_array(cluster2_effiency, int, NULL, 0664);
 
 // declare a global variable to record platform sod id information.
@@ -206,7 +206,7 @@ unsigned int update_power_effiency_lock(struct cpufreq_policy *policy, unsigned 
 	unsigned int temp_index;
 	unsigned long flags;
 
-	if ((affect_mode == 0) || (freq <= 0)) {
+	if (unlikely((affect_mode == 0) || (freq <= 0))) {
 		return freq;
 	}
 
