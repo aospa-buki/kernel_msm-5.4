@@ -234,4 +234,6 @@ source "drivers/cpufreq_bouncing/Kconfig"
 
 source "drivers/cpufreq_effiency/Kconfig"
 
+source "drivers/cpufreq_health/Kconfig"
+
 endmenu
