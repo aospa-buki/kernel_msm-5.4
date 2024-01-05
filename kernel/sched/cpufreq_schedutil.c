@@ -23,6 +23,10 @@
 static unsigned int default_target_loads[] = {DEFAULT_TARGET_LOAD};
 #endif
 
+#ifdef CONFIG_OPLUS_FEATURE_SUGOV_POWER_EFFIENCY
+#include <linux/cpufreq_effiency.h>
+#endif
+
 struct sugov_tunables {
 	struct gov_attr_set	attr_set;
 	unsigned int		up_rate_limit_us;
@@ -379,6 +383,10 @@ static unsigned int choose_freq(struct sugov_policy *sg_policy,
 
 		/* If same frequency chosen as previous then done. */
 	} while (freq != prevfreq);
+
+#ifdef CONFIG_OPLUS_FEATURE_SUGOV_POWER_EFFIENCY
+	freq = update_power_effiency_lock(policy, freq, loadadjfreq / tl);
+#endif /* CONFIG_OPLUS_FEATURE_SUGOV_POWER_EFFIENCY */
 
 	return freq;
 }
