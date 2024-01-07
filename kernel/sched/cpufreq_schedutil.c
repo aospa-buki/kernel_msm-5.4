@@ -14,6 +14,10 @@
 #include <trace/events/power.h>
 #include <linux/sched/sysctl.h>
 #include <trace/hooks/sched.h>
+#ifdef CONFIG_OPLUS_FEATURE_OCH
+#include <linux/cpufreq_health.h>
+#endif
+
 
 #define IOWAIT_BOOST_MIN	(SCHED_CAPACITY_SCALE / 8)
 
@@ -73,6 +77,9 @@ struct sugov_policy {
 
 	bool			limits_changed;
 	bool			need_freq_update;
+#ifdef CONFIG_OPLUS_FEATURE_OCH
+	int newtask_flag;
+#endif
 };
 
 struct sugov_cpu {
@@ -443,6 +450,9 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
 
 	sg_policy->need_freq_update = false;
 	sg_policy->cached_raw_freq = freq;
+#ifdef CONFIG_OPLUS_FEATURE_OCH
+	cpufreq_health_get_newtask_state(policy, sg_policy->newtask_flag);
+#endif
 	return cpufreq_driver_resolve_freq(policy, freq);
 }
 
@@ -737,8 +747,14 @@ static void sugov_walt_adjust(struct sugov_cpu *sg_cpu, unsigned long *util,
 	if (is_hiload && !is_migration)
 		*util = max(*util, sg_policy->hispeed_util);
 
-	if (is_hiload && nl >= mult_frac(cpu_util, NL_RATIO, 100))
+	if (is_hiload && nl >= mult_frac(cpu_util, NL_RATIO, 100)) {
 		*util = *max;
+#ifdef CONFIG_OPLUS_FEATURE_OCH
+		sg_policy->newtask_flag = 1;
+	} else {
+		sg_policy->newtask_flag = 0;
+#endif
+	}
 
 	if (sg_policy->tunables->pl && pl > *util) {
 		if (conservative_pl())
