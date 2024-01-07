@@ -50,4 +50,8 @@ source "drivers/soc/oplus/cpufreq_bouncing/Kconfig"
 source "drivers/soc/oplus/cpufreq_effiency/Kconfig"
 #endif /* OPLUS_FEATURE_SUGOV_POWER_EFFIENCY */
 
+#ifdef OPLUS_FEATURE_OCH
+source "drivers/soc/oplus/cpufreq_health/Kconfig"
+#endif
+
 endmenu
