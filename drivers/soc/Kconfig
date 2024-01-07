@@ -45,4 +45,8 @@ source "drivers/soc/oplus/misc/Kconfig"
 #ifdef OPLUS_FEATURE_SUGOV_POWER_EFFIENCY
 source "drivers/soc/oplus/cpufreq_effiency/Kconfig"
 #endif /* OPLUS_FEATURE_SUGOV_POWER_EFFIENCY */
+
+#ifdef OPLUS_FEATURE_SUGOV_POWER_EFFIENCY
+source "drivers/soc/oplus/cpufreq_effiency/Kconfig"
+#endif /* OPLUS_FEATURE_SUGOV_POWER_EFFIENCY */
 endmenu

@@ -51,3 +51,7 @@ obj-y += oplus/misc/
 #ifdef OPLUS_FEATURE_CPUFREQ_BOUNCING
 obj-$(CONFIG_OPLUS_FEATURE_CPUFREQ_BOUNCING) += oplus/cpufreq_bouncing/
 #endif
+
+#ifdef OPLUS_FEATURE_SUGOV_POWER_EFFIENCY
+obj-$(CONFIG_OPLUS_FEATURE_SUGOV_POWER_EFFIENCY) += oplus/cpufreq_effiency/
+#endif /* OPLUS_FEATURE_SUGOV_POWER_EFFIENCY */
