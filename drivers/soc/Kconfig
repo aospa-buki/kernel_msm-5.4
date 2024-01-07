@@ -41,4 +41,9 @@ source "drivers/soc/oplus/oplus_consumer_ir/Kconfig"
 #ifdef OPLUS_FEATURE_ESIM
 source "drivers/soc/oplus/misc/Kconfig"
 #endif /* OPLUS_FEATURE_ESIM */
+
+#ifdef OPLUS_FEATURE_CPUFREQ_BOUNCING
+source "drivers/soc/oplus/cpufreq_bouncing/Kconfig"
+#endif
+
 endmenu
