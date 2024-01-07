@@ -35,6 +35,10 @@
 #include <linux/cpufreq_bouncing/cpufreq_bouncing.h>
 #endif
 
+#ifdef CONFIG_OPLUS_FEATURE_OCH
+#include <linux/cpufreq_health.h>
+#endif
+
 static LIST_HEAD(cpufreq_policy_list);
 
 /* Macros to iterate over CPU policies */
@@ -2466,6 +2470,10 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 
 	policy->min = new_data.min;
 	policy->max = new_data.max;
+
+#ifdef CONFIG_OPLUS_FEATURE_OCH
+	cpufreq_health_get_state(policy);
+#endif
 	trace_cpu_frequency_limits(policy);
 
 	arch_set_max_freq_scale(policy->cpus, policy->max);
